@@ -1,0 +1,5 @@
+{"message":"Bookmark with id 3 not found.","level":"error"}
+{"message":"Bookmark with id f6955114-0c8b-413c-91eb-3790de42b44f created","level":"info"}
+{"message":"URL is required","level":"error"}
+{"message":"Bookmark with id 2 deleted.","level":"info"}
+{"message":"Bookmark with id 3 not found","level":"error"}
