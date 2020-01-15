@@ -160,28 +160,60 @@ describe(`Bookmarks endpoints`, () => {
         });
     });
 
-    const requiredFields = ['title', 'url', 'rating'];
+    describe(`Field validation`, () => {
+        context(`Required fields are present`, () => {
+            const requiredFields = ['title', 'url', 'rating'];
 
-    //Check that each required field is present and responds with the appropriate status code if not
-    requiredFields.forEach(field => {
-        const newBookmark = {
-            title: "Test POST bookmark",
-            url: "https://www.test.com/",
-            rating: 3,
-            description: "Test new bookmark",
-        };
-
-        it(`responds with 400 and an error message when the '${field}' is missing`, () => {
-            delete newBookmark[field]
-            return supertest(app)
-               .post('/bookmarks')
-               .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-               .send(newBookmark)
-               .expect(400, {
-                 error: { message: `Missing '${field}' in request body` }
+            //Check that each required field is present and responds with the appropriate status code if not
+            requiredFields.forEach(field => {
+                const newBookmark = {
+                    title: "Test POST bookmark",
+                    url: "https://www.test.com/",
+                    rating: 3,
+                    description: "Test new bookmark",
+                };
+    
+                it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+                    delete newBookmark[field]
+                    return supertest(app)
+                    .post('/bookmarks')
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send(newBookmark)
+                    .expect(400, {
+                        error: { message: `Missing '${field}' in request body` }
+                        })
                 })
+            });
         })
-    });
+        
+        context(`Data type is correct`, () => {
+            const testBookmarks = makeBookmarksArray();
+
+            beforeEach(`insert bookmarks`, () => {
+                return db
+                    .into('bookmarks')
+                    .insert(testBookmarks);
+            });
+    
+            afterEach('Start with a fresh table', () => db('bookmarks').truncate());
+
+            it(`Rating is a number 1-5`, () => {
+                return supertest(app)
+                    .get('/bookmarks')
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .then(response => {
+                        let bookmarkIds = response.body.map(bm => bm.id);
+                        let badIds = bookmarkIds.filter(id => (id > 5 || id < 1));
+                        expect(badIds).to.eql([])
+                    });
+            });
+        })
+
+
+    })
+
+    
 
 
 

@@ -20,7 +20,7 @@ const BookmarksService = {
     },
     deleteBookmark(knex, bookmarkId) {
         return knex('bookmarks')
-            .where({bookmarkId})
+            .where('id', bookmarkId )
             .delete();
     },
 };

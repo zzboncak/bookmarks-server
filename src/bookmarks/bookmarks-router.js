@@ -19,7 +19,8 @@ bookmarksRouter
     .get((req, res) => {
         BookmarksService.getAllBookmarks(req.app.get('db'))
             .then(response => {
-                res.send(response)
+                let sanitizedBookmarks = response.map(bm => serializeBookmark(bm));
+                res.send(sanitizedBookmarks)
             });
     })
     .post(bodyParser, (req, res, next) => {
