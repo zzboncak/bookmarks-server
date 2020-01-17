@@ -23,6 +23,11 @@ const BookmarksService = {
             .where('id', bookmarkId )
             .delete();
     },
+    updateBookmark(knex, bookmarkId, updatedBookmark) {
+        return knex('bookmarks')
+            .where('id', bookmarkId)
+            .update(updatedBookmark);
+    }
 };
 
 module.exports = BookmarksService;
